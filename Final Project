@@ -1,4 +1,4 @@
-// Name: Andrew Hignight
+// Name: Andrew Hignight, Mathew Rios, Ean McNeil, Michael Wang
 // Date: 12/1/2022
 
 // Define data registers and ports
@@ -31,7 +31,7 @@ bool DISABLED_ST, IDLE_ST, RUNNING_ST, ERROR_ST;
 // Definitions libraries, global definitions and declarations, ISR function, etc
 int current_state;
 int state_change = 0;
-float Threshold_Temperature = 21;
+float Threshold_Temperature = 20;
 char daysOfTheWeek[7][12] = ("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
 
 // ISR 
