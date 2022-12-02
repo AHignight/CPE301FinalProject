@@ -1,0 +1,54 @@
+// Name: Andrew Hignight
+// Date: 12/1/2022
+
+// Define data registers and ports
+#define SET_OUTPUT(ddr, pin) *ddr |= (0x01 << pin);
+#define SET_INPUT(ddr, pin) *ddr &= ~(0x01 << pin);
+#define SET_HIGH(port, pin) *port |= (0x01 << pin);
+#define SET_LOW(port, pin) *port &= ~(0x01 << pin);
+
+// Port A Register
+volatile unsigned char* port_A = (unsigned char*) 0x22;
+volatile unsigned char* ddr_A = (unsigned char*) 0x21;
+volatile unsigned char* pin_A = (unsigned char*) 0x20;
+
+//set port b, d, f, l
+
+// ADC Register 
+volatile unsigned char* my_ADMUX = (unsigned char*) 0x7C;
+volatile unsigned char* my_ADCSRB = (unsigned char*) 0x7B;
+volatile unsigned char* my_ADCSRA = (unsigned char*) 0x7A;
+volatile unsigned char* my_ADC_Data = (unsigned char*) 0x78;
+
+// ISR Register
+volatile unsigned char* my_ECIRA = (unsigned char*) 0x69;
+volatile unsigned char* my_EIMSK = (unsigned char*) 0x3D;
+int count = 0;
+
+// Bool Functions
+bool DISABLED_ST, IDLE_ST, RUNNING_ST, ERROR_ST;
+
+// Definitions libraries, global definitions and declarations, ISR function, etc
+int current_state;
+int state_change = 0;
+float Threshold_Temperature = 21;
+char daysOfTheWeek[7][12] = ("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
+
+// ISR 
+ISR(INT2_vect){
+count ++;
+state_change = 1;
+
+if(count%2 == 1) {
+	DISABLED_ST = false;
+	RUNNING_ST = false;
+	ERROR_ST = false;
+	IDLE_ST = true;
+}
+else {
+	IDLE_ST = false;
+	RUNNING_ST = false;
+	ERROR_ST = false;
+	DISABLED_ST = true;
+}
+} 
