@@ -117,8 +117,7 @@ void setup() {
   
   //Setting up lcd for temp/humd
   lcd.begin(16, 2);  	 //enables 16x2 lcd screen spaces
-  lcd.setCursor(0,1);    //col 0 line 1 start
-  lcd.setCursor(0,2); 	 //col 0 line 2 start
+
   
   
   
@@ -153,6 +152,8 @@ void loop() {
   if(measure_environment(&temp, &humd) == true)
   {
   	// Calculate temp from celcius to farenheight
+    lcd.setCursor(0,1);    //col 0 line 1 start
+    lcd.setCursor(0,2);    //col 0 line 2 start
     float op1 = temp*1.8;
     float op2 = op1 + 32;
     	//printing valeus onto lcd screen
@@ -215,4 +216,33 @@ static bool measure_environment(float *temp, float *humd)
     }
   }
   return(false);
+}
+
+int resvalWater = 0;  // holds the value
+int respinWater = A5; // sensor pin used
+  
+void setup() { 
+  lcd.begin(16, 2);  
+  lcd.print("WATER LEVEL: "); 
+} 
+
+void loop() { 
+  // set the cursor to column 0, line 1 
+  lcd.setCursor(0, 1); 
+    
+  resval = analogRead(respin); //Read data from analog pin and store it to resval variable
+   
+  if (resval<=100){ 
+    lcd.println("Empty"); 
+  }
+  else if (resval>100 && resval<=300){ 
+    lcd.println("Low"); 
+  } 
+  else if (resval>300 && resval<=500){ 
+    lcd.println("Medium"); 
+  } 
+  else if (resval>500){ 
+    lcd.println("High"); 
+  }
+  delay(1000); 
 }
