@@ -115,8 +115,7 @@ void loop() {
     myStepper.step(stepsPerRev);
     delay(500);
   }
-  // matts work
-  //declaring variable for temp and humd which are decimal values
+  // declaring variable for temp and humd which are decimal values
   float temp;
   float humd;
      //Temp. and Humd. measure
