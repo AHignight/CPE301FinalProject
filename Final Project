@@ -85,7 +85,10 @@ void setup() {
 
   Serial.begin(9600);
   
-  
+  //Setting up lcd for temp/humd
+  lcd.begin(16, 2);  	 //enables 16x2 lcd screen spaces
+  lcd.setCursor(0,1);    //col 0 line 1 start
+  lcd.setCursor(0,2); 	 //col 0 line 2 start
   
   
   
@@ -113,6 +116,25 @@ void loop() {
     delay(500);
   }
   // matts work
+  //declaring variable for temp and humd which are decimal values
+  float temp;
+  float humd;
+     //Temp. and Humd. measure
+     //If device works and detects temp or humd, runs the code
+  if(measure_environment(&temp, &humd) == true)
+  {
+  	// Calculate temp from celcius to farenheight
+    float op1 = temp*1.8;
+    float op2 = op1 + 32;
+    	//printing valeus onto lcd screen
+    lcd.print("Temperature = ");
+    lcd.print(op2,1);
+    lcd.println("deg. F, ");
+    lcd.print("Humidity = ");
+    lcd.print(humd,1);
+    lcd.println("% ");
+    //6000 is 1 min, change around to test
+    delay(6000); 
 
 }
 
@@ -150,33 +172,10 @@ void idle_state() {
   error_flag = 0;
 }
 
-(Void Settup)
-	//Setting up lcd for temp/humd
-  lcd.begin(16, 2);  
-  lcd.setCursor(0,1);    
-  lcd.setCursor(0,2); 
-(Void Loop)
-	//declaring variable for temp and humd which are decimal values
-  float temp;
-  float humd;
-     //Temp. and Humd. measure
-     //If device works and detects temp or humd, runs the code
-  if(measure_environment(&temp, &humd) == true)
-  {
-  	// Calculate temp from celcius to farenheight
-    float op1 = temp*1.8;
-    float op2 = op1 + 32;
-    	//printing valeus onto lcd screen
-    lcd.print("Temperature = ");
-    lcd.print(op2,1);
-    lcd.println("deg. F, Humidity = ");
-    lcd.print("Humidity = ");
-    lcd.print(humd,1);
-    lcd.println("%");
-    //6000 is 1 min, change around to test
-    delay(6000); 
+//Separate calculation	
 static bool measure_environment(float *temp, float *humd)
 {
+	//calculating timestamp per milliseconds
   static unsigned long measurement_timestamp=millis();
   if(millis()-measurement_timestamp>3000ul)
   {
