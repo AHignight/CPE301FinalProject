@@ -78,12 +78,19 @@ else {
 
 void setup() {
 
-  //Stepper Motor
+  // Stepper Motor
   myStepper.setSpeed(32); //sets stepper motor speed to 60 rpm
   SET_INPUT((unsigned char*) 0x10A, 0); //PL0 set as input
   SET_INPUT((unsigned char*) 0x10A, 1); //PL1 sets as input
 
   Serial.begin(9600);
+  
+  
+  
+  
+  
+  
+  
 }
 void loop() {
 
@@ -105,7 +112,7 @@ void loop() {
     myStepper.step(stepsPerRev);
     delay(500);
   }
-  
+  // matts work
 
 }
 
