@@ -27,7 +27,10 @@ volatile unsigned char* port_l = (unsigned char*) 0x10B;
 volatile unsigned char* ddr_l = (unsigned char*) 0x10A;
 volatile unsigned char* pin_l = (unsigned char*) 0x109;
 
-//set port d
+// Port D Registers
+volatile usigned char* port_d = (usigned char*) 0x0B;
+volatile usigned char* ddr_d = (usigned char*) 0x0A;
+volatile usigned char* pin_d = (usigned char*) 0x09;
 
 // ADC Register 
 volatile unsigned char* my_ADMUX = (unsigned char*) 0x7C;
