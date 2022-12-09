@@ -104,3 +104,36 @@ void loop() {
   }
 
 }
+
+// Enables the timer and interrupts
+void setup_timer_registers() {
+  // Setup the timer control registers.
+  OCR0A = 100;
+  TCCR0A |= 0b00000010;   // CTC mode, internal clk, no prescaler
+  TCCR0B |= 0b00000001;   // Start the timer, no prescaler                    
+  TIMSK0 |= 0b00000010;   // Enable Timer0 Compare Match A Interrupt
+}
+
+// When water level is too low
+void error_state() {
+  *port_b |= 0b00010000;    // Turn on the red LED
+  *port_b &= 0b00011111;    // Turn off the rest
+  *port_f &= 0b11110111;    // Turn off the motor
+  error_flag = 1;
+}
+
+// When monitoring and fan are disabled using an on/off button
+void disabled_state() {
+  *port_b |= 0b00100000;    // Turn on the yellow LED
+  *port_b &= 0b00101111;    // Turn off the rest
+  *port_f &= 0b11110111;    // Turn off the motor
+  error_flag = 0;
+}
+
+// When water level is and temperature is low
+void idle_state() {
+  *port_b |= 0b01000000;    // Turn on the green LED
+  *port_b &= 0b01001111;    // Turn off the rest
+  *port_f &= 0b11110111;    // Turn off the motor
+  error_flag = 0;
+}
