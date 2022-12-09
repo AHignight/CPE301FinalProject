@@ -63,16 +63,16 @@ count ++;
 state_change = 1;
 
 if(count%2 == 1) {
-	DISABLED_ST = false;
-	RUNNING_ST = false;
-	ERROR_ST = false;
-	IDLE_ST = true;
+	disabled_state = false;
+	running_state = false;
+	error_state = false;
+	idle_state = true;
 }
 else {
-	IDLE_ST = false;
-	RUNNING_ST = false;
-	ERROR_ST = false;
-	DISABLED_ST = true;
+	idle_state = false;
+	running_state = false;
+	error_state = false;
+	disabled_state = true;
 }
 } 
 
