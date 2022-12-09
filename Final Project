@@ -1,6 +1,17 @@
 // Name: Andrew Hignight, Mathew Rios, Ean McNeil, Michael Wang
 // Date: 12/1/2022
 
+#include <dht_nonblocking.h>
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12,11,5,4,3,2); 
+#define DHT_SENSOR_TYPE DHT_TYPE_11
+int DHT_SENSOR_PIN = 9;
+DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
+
 // Define data registers and ports
 #define SET_OUTPUT(ddr, pin) *ddr |= (0x01 << pin);
 #define SET_INPUT(ddr, pin) *ddr &= ~(0x01 << pin);
