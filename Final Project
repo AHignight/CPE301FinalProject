@@ -168,3 +168,16 @@ void idle_state() {
     lcd.println("%");
     //6000 is 1 min, change around to test
     delay(6000); 
+static bool measure_environment(float *temp, float *humd)
+{
+  static unsigned long measurement_timestamp=millis();
+  if(millis()-measurement_timestamp>3000ul)
+  {
+    if(dht_sensor.measure(temp,humd) == true)
+    {
+      measurement_timestamp = millis();
+      return(true);
+    }
+  }
+  return(false);
+}
