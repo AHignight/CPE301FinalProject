@@ -49,7 +49,7 @@ volatile unsigned char* my_ADCSRB = (unsigned char*) 0x7B;
 volatile unsigned char* my_ADCSRA = (unsigned char*) 0x7A;
 volatile unsigned char* my_ADC_Data = (unsigned char*) 0x78;
 
-// ISR Register
+// External ISR Registers Control and Mask
 volatile unsigned char* my_ECIRA = (unsigned char*) 0x69;
 volatile unsigned char* my_EIMSK = (unsigned char*) 0x3D;
 int count = 0;
