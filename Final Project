@@ -77,7 +77,7 @@ void adc_init()
 }
 
 // Bool Functions
-bool DISABLED_ST, IDLE_ST, RUNNING_ST, ERROR_ST;
+bool disabled_state, idle_state, running_state, error_state;
 
 //Stepper Motor
 const int stepsPerRev = 256;
