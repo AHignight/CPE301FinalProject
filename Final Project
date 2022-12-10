@@ -149,17 +149,17 @@ void loop() {
   float humd;
      //Temp. and Humd. measure
      //If device works and detects temp or humd, runs the code
-  if(measure_environment(&temp, &humd) == true)
+  else if(measure_environment(&temp, &humd) == true)
   {
   	// Calculate temp from celcius to farenheight
-    lcd.setCursor(0,1);    //col 0 line 1 start
-    lcd.setCursor(0,2);    //col 0 line 2 start
     float op1 = temp*1.8;
     float op2 = op1 + 32;
     	//printing valeus onto lcd screen
+    lcd.setCursor(0,0);     //col 0 line 0 start
     lcd.print("Temperature = ");
     lcd.print(op2,1);
-    lcd.println("deg. F, ");
+    lcd.println(" deg. F");
+    lcd.setCursor(0,1);      //col 0 line 1 start
     lcd.print("Humidity = ");
     lcd.print(humd,1);
     lcd.println("% ");
