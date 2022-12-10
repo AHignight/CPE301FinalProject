@@ -12,6 +12,9 @@ LiquidCrystal lcd(12,11,5,4,3,2);
 int DHT_SENSOR_PIN = 9;
 DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 
+int WaterValue = 0;  // holds the value for water level
+int WatDetectPin = A5; // sensor pin used for level detector
+
 // Define data registers and ports
 #define SET_OUTPUT(ddr, pin) *ddr |= (0x01 << pin);
 #define SET_INPUT(ddr, pin) *ddr &= ~(0x01 << pin);
@@ -159,8 +162,28 @@ else if(measure_environment(&temp, &humd) == true)
     lcd.println("% ");
     //6000 is 1 min, change around to test
     delay(6000); 
+    
+else if{
+    lcd.setCursor(0,0); // set the cursor to column 0, line 0
+    lcd.print("WATER LEVEL: ");
+    lcd.setCursor(0,1); // set the cursor to column 0, line 1 
+    WaterValue = analogRead(WatDetectPin); //Read data from analog pin and store it to resval variable (MAKE SURE TO CHANGE FROM ADC TO NOT THAT!!!)
+    //If water values are at a certain point send certain message to lcd
+    if (WaterValue<=100){ 
+      lcd.println("Empty"); 
+    }
+    else if (WaterValue>100 && WaterValue<=300){ 
+      lcd.println("Low"); 
+    } 
+    else if (WaterValue>300 && WaterValue<=500){ 
+      lcd.println("Medium"); 
+    } 
+    else if (WaterValue>500){ 
+      lcd.println("High"); 
+    }
+    delay(1000); 
+  }
 }
-
 // Enables the timer and interrupts
 void setup_timer_registers() {
 // Setup the timer control registers.
@@ -208,32 +231,4 @@ static bool measure_environment(float *temp, float *humd)
     }
   }
   return(false);
-}
-
-int resval = 0;  // holds the value
-int respin = A5; // sensor pin used
-  
-void setup() { 
-  lcd.begin(16, 2);  
-  lcd.print("WATER LEVEL: "); 
-} 
-
-void loop() { 
-  // set the cursor to column 0, line 1 
-  lcd.setCursor(0, 1); 
-  resval = analogRead(respin); //Read data from analog pin and store it to resval variable
-   
-  if (resval<=100){ 
-    lcd.println("Empty"); 
-  }
-  else if (resval>100 && resval<=300){ 
-    lcd.println("Low"); 
-  } 
-  else if (resval>300 && resval<=500){ 
-    lcd.println("Medium"); 
-  } 
-  else if (resval>500){ 
-    lcd.println("High"); 
-  }
-  delay(1000); 
 }
