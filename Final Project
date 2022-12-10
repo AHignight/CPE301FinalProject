@@ -156,9 +156,9 @@ void loop() {
     float op2 = op1 + 32;
     	//printing valeus onto lcd screen
     lcd.setCursor(0,0);     //col 0 line 0 start
-    lcd.print("Temperature = ");
+    lcd.print("Temperature=");
     lcd.print(op2,1);
-    lcd.println(" deg. F");
+    lcd.println("deg.F");
     lcd.setCursor(0,1);      //col 0 line 1 start
     lcd.print("Humidity = ");
     lcd.print(humd,1);
