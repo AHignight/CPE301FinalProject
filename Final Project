@@ -18,12 +18,12 @@ DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 #define SET_HIGH(port, pin) *port |= (0x01 << pin);
 #define SET_LOW(port, pin) *port &= ~(0x01 << pin);
 
-// Port A Register
+// Port A Register Pointers
 volatile unsigned char* port_A = (unsigned char*) 0x22;
 volatile unsigned char* ddr_A = (unsigned char*) 0x21;
 volatile unsigned char* pin_A = (unsigned char*) 0x20;
 
-// Port B Register
+// Port B Register Pointers
 volatile unsigned char* port_b = (unsigned char*) 0x25;
 volatile unsigned char* ddr_b = (unsigned char*) 0x24;
 volatile unsigned char* pin_b = (unsigned char*) 0x23;
@@ -33,12 +33,12 @@ volatile unsigned char* port_f = (unsigned char*) 0x11;
 volatile unsigned char* ddr_f  = (unsigned char*) 0x10; 
 volatile unsigned char* pin_f  = (unsigned char*) 0x0F; 
 
-// Port L Registers
+// Port L Registers Pointers
 volatile unsigned char* port_l = (unsigned char*) 0x10B;
 volatile unsigned char* ddr_l = (unsigned char*) 0x10A;
 volatile unsigned char* pin_l = (unsigned char*) 0x109;
 
-// Port D Registers
+// Port D Registers Pointers
 volatile usigned char* port_d = (usigned char*) 0x0B;
 volatile usigned char* ddr_d = (usigned char*) 0x0A;
 volatile usigned char* pin_d = (usigned char*) 0x09;
@@ -57,12 +57,12 @@ int count = 0;
 // Initialize ADC
 void adc_init()
 {
-  // setup the A register
+  // setup the ADC A register
   *my_ADCSRA |= 0b10000000; // set bit   7 to 1 to enable the ADC
   *my_ADCSRA &= 0b11011111; // clear bit 5 to 0 to disable the ADC trigger mode
   *my_ADCSRA &= 0b11011111; // clear bit 5 to 0 to disable the ADC interrupt
   *my_ADCSRA &= 0b11011111; // clear bit 5 to 0 to set prescaler selection to slow reading
-  // setup the B register
+  // setup the ADC B register
   *my_ADCSRB &= 0b11110111; // clear bit 3 to 0 to reset the channel and gain bits
   *my_ADCSRB &= 0b11111000; // clear bit 2-0 to 0 to set free running mode
   // setup the MUX Register
@@ -107,25 +107,17 @@ else {
 } 
 
 void setup() {
-
   // Stepper Motor
   myStepper.setSpeed(32); //sets stepper motor speed to 60 rpm
   SET_INPUT((unsigned char*) 0x10A, 0); //PL0 set as input
   SET_INPUT((unsigned char*) 0x10A, 1); //PL1 sets as input
-
   Serial.begin(9600);
   
   //Setting up lcd for temp/humd
   lcd.begin(16, 2);  	 //enables 16x2 lcd screen spaces
-
-  
-  
-  
-  
-  
 }
-void loop() {
 
+void loop() {
   //Stepper Motor 
   if (*pin_l & 0x01){
     Serial.print("rotate ");
@@ -136,20 +128,22 @@ void loop() {
     myStepper.step(-stepsPerRev); //negative value sends stepPerRev in reverse direvtion
     delay(500);
   }
- else if (*pin_l & 0x02){
 
+else if (*pin_l & 0x02){
     Serial.print("rotate ");
     Serial.print(stepsPerRev / 5.68889 );
     Serial.println("° counter-clockwise");
     myStepper.step(stepsPerRev);
     delay(500);
   }
-  // declaring variable for temp and humd which are decimal values
+
+// declaring variable for temp and humd which are decimal values
   float temp;
   float humd;
      //Temp. and Humd. measure
      //If device works and detects temp or humd, runs the code
-  else if(measure_environment(&temp, &humd) == true)
+
+else if(measure_environment(&temp, &humd) == true)
   {
   	// Calculate temp from celcius to farenheight
     float op1 = temp*1.8;
@@ -165,13 +159,11 @@ void loop() {
     lcd.println("% ");
     //6000 is 1 min, change around to test
     delay(6000); 
-
 }
-
 
 // Enables the timer and interrupts
 void setup_timer_registers() {
-  // Setup the timer control registers.
+// Setup the timer control registers.
   OCR0A = 100;
   TCCR0A |= 0b00000010;   // CTC mode, internal clk, no prescaler
   TCCR0B |= 0b00000001;   // Start the timer, no prescaler                    
@@ -229,7 +221,6 @@ void setup() {
 void loop() { 
   // set the cursor to column 0, line 1 
   lcd.setCursor(0, 1); 
-    
   resval = analogRead(respin); //Read data from analog pin and store it to resval variable
    
   if (resval<=100){ 
