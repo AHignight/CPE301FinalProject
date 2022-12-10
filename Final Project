@@ -209,8 +209,8 @@ static bool measure_environment(float *temp, float *humd)
   return(false);
 }
 
-int resvalWater = 0;  // holds the value
-int respinWater = A5; // sensor pin used
+int resval = 0;  // holds the value
+int respin = A5; // sensor pin used
   
 void setup() { 
   lcd.begin(16, 2);  
