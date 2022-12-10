@@ -80,7 +80,6 @@ bool DISABLED_ST, IDLE_ST, RUNNING_ST, ERROR_ST;
 const int stepsPerRev = 256;
 Stepper myStepper(stepsPerRev, 8, 9, 10, 11); //initializes stepper motor on pins 8-11
 
-
 // Definitions libraries, global definitions and declarations, ISR function, etc
 int current_state;
 int state_change = 0;
