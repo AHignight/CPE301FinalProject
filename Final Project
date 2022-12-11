@@ -13,7 +13,11 @@ int DHT_SENSOR_PIN = 9;
 DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 
 int WaterValue = 0;  // holds the value for water level
-int WatDetectPin = A5; // sensor pin used for level detector
+int WatDetectPin = 8; // sensor pin used for level detector
+
+// declaring variable for temp and humd which are decimal values
+float temp;
+float humd;
 
 // Define data registers and ports
 #define SET_OUTPUT(ddr, pin) *ddr |= (0x01 << pin);
@@ -140,18 +144,14 @@ else if (*pin_l & 0x02){
     delay(500);
   }
 
-// declaring variable for temp and humd which are decimal values
-  float temp;
-  float humd;
-     //Temp. and Humd. measure
-     //If device works and detects temp or humd, runs the code
 
-else if(measure_environment(&temp, &humd) == true)
-  {
-  	// Calculate temp from celcius to farenheight
+//Temp. and Humd. measure
+//If device works and detects temp or humd, runs the code
+if(measure_environment(&temp, &humd) == true){
+    // Calculate temp from celcius to farenheight
     float op1 = temp*1.8;
     float op2 = op1 + 32;
-    	//printing valeus onto lcd screen
+    //printing valeus onto lcd screen
     lcd.setCursor(0,0);     //col 0 line 0 start
     lcd.print("Temperature=");
     lcd.print(op2,1);
@@ -162,12 +162,13 @@ else if(measure_environment(&temp, &humd) == true)
     lcd.println("% ");
     //6000 is 1 min, change around to test
     delay(6000); 
-    
-else if{
+}    
+
+//Water Level Detection
     lcd.setCursor(0,0); // set the cursor to column 0, line 0
     lcd.print("WATER LEVEL: ");
     lcd.setCursor(0,1); // set the cursor to column 0, line 1 
-    WaterValue = analogRead(WatDetectPin); //Read data from analog pin and store it to resval variable (MAKE SURE TO CHANGE FROM ADC TO NOT THAT!!!)
+    WaterValue = analogRead(WatDetectPin); //Read data from analog pin and store it to WaterValue (MAKE SURE TO CHANGE FROM ADC TO NOT THAT!!!)
     //If water values are at a certain point send certain message to lcd
     if (WaterValue<=100){ 
       lcd.println("Empty"); 
