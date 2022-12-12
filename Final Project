@@ -477,4 +477,4 @@ static bool measure_environment(float *temp, float *humd)
   }
   return(false);
 }
-*//
+*/
