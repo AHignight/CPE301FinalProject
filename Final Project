@@ -12,12 +12,13 @@ LiquidCrystal lcd(12,11,5,4,3,2);
 int DHT_SENSOR_PIN = 9;
 DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 
-int WaterValue = 0;  // holds the value for water level
-int WatDetectPin = 8; // sensor pin used for level detector
-
 // declaring variable for temp and humd which are decimal values
 float temp;
 float humd;
+
+int Waterval = 0;  // holds the value
+int inputW = 7; // sensor pin used
+int outputW = 11; //output to the lcd
 
 // Define data registers and ports
 #define SET_OUTPUT(ddr, pin) *ddr |= (0x01 << pin);
@@ -122,6 +123,9 @@ void setup() {
   
   //Setting up lcd for temp/humd
   lcd.begin(16, 2);  	 //enables 16x2 lcd screen spaces
+  
+  pinMode (inputW, INPUT);
+  pinMode (outputW, OUTPUT);
 }
 
 void loop() {
@@ -165,25 +169,20 @@ if(measure_environment(&temp, &humd) == true){
 }    
 
 //Water Level Detection
-    lcd.setCursor(0,0); // set the cursor to column 0, line 0
-    lcd.print("WATER LEVEL: ");
-    lcd.setCursor(0,1); // set the cursor to column 0, line 1 
-    WaterValue = analogRead(WatDetectPin); //Read data from analog pin and store it to WaterValue (MAKE SURE TO CHANGE FROM ADC TO NOT THAT!!!)
-    //If water values are at a certain point send certain message to lcd
-    if (WaterValue<=100){ 
-      lcd.println("Empty"); 
-    }
-    else if (WaterValue>100 && WaterValue<=300){ 
-      lcd.println("Low"); 
-    } 
-    else if (WaterValue>300 && WaterValue<=500){ 
-      lcd.println("Medium"); 
-    } 
-    else if (WaterValue>500){ 
-      lcd.println("High"); 
-    }
-    delay(1000); 
-  }
+  Waterval = digitalRead(inputW);
+   if(Waterval == 0){
+    digitalWrite(inputW, 0);
+    Serial.println("EMPTY");
+   }
+   else if(Waterval == LOW){
+    digitalWrite(inputW, HIGH);
+    Serial.println("HIGH");
+   }
+   else if(Waterval == HIGH){
+    digitalWrite(inputW, HIGH);
+    Serial.println("HIGH");
+   }
+  
 }
 // Enables the timer and interrupts
 void setup_timer_registers() {
