@@ -6,11 +6,29 @@
 #include <DHT.h>
 #include <DHT_U.h>
 #include <LiquidCrystal.h>
+#include <Wire.h>
+#include <RTClib.h>
+
+//RTC days of the week array
+RTC_DS1307 rtc;
+char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 LiquidCrystal lcd(12,11,5,4,3,2); 
 #define DHT_SENSOR_TYPE DHT_TYPE_11
 int DHT_SENSOR_PIN = 9;
 DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
+
+// Bool Functions
+bool disabled_state, idle_state, running_state, error_state;
+
+// Stepper Motor
+const int stepsPerRev = 256;
+Stepper myStepper(stepsPerRev, 8, 9, 10, 11); //initializes stepper motor on pins 8-11
+
+// Definitions libraries, global definitions and declarations, etc
+int current_state;
+int state_change = 0;
+float Threshold_Temperature = 20;
 
 // declaring variable for temp and humd which are decimal values
 float temp;
@@ -81,20 +99,7 @@ void adc_init()
   *my_ADMUX  &= 0b11100000; // clear bit 4-0 to 0 to reset the channel and gain bits
 }
 
-// Bool Functions
-bool disabled_state, idle_state, running_state, error_state;
-
-//Stepper Motor
-const int stepsPerRev = 256;
-Stepper myStepper(stepsPerRev, 8, 9, 10, 11); //initializes stepper motor on pins 8-11
-
-// Definitions libraries, global definitions and declarations, ISR function, etc
-int current_state;
-int state_change = 0;
-float Threshold_Temperature = 20;
-char daysOfTheWeek[7][12] = ("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
-
-// ISR **
+// ISR
 ISR(INT2_vect){
 count ++;
 state_change = 1;
@@ -115,11 +120,26 @@ else {
 } 
 
 void setup() {
+// RTC setup
+ while (!Serial); 
+ Serial.begin(9600);
+ if (! rtc.begin()) {
+   Serial.println("Couldn't find RTC");
+   while (1);
+ }
+ if (! rtc.isrunning()) {
+   Serial.println("RTC is NOT running!");
+   // following line sets the RTC to the date & time this sketch was compiled
+   rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+   // This line sets the RTC with an explicit date & time, for example to set
+   // January 21, 2014 at 3am you would call:
+   // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
+ }
+ 
   // Stepper Motor
   myStepper.setSpeed(32); //sets stepper motor speed to 60 rpm
   SET_INPUT((unsigned char*) 0x10A, 0); //PL0 set as input
   SET_INPUT((unsigned char*) 0x10A, 1); //PL1 sets as input
-  Serial.begin(9600);
   
   //Setting up lcd for temp/humd
   lcd.begin(16, 2);  	 //enables 16x2 lcd screen spaces
@@ -129,7 +149,27 @@ void setup() {
 }
 
 void loop() {
-  //Stepper Motor 
+// RTC loop for time and date
+ DateTime now = rtc.now();
+ Serial.print("Time: ");
+ Serial.print(now.hour(), DEC);
+ Serial.print(':');
+ Serial.print(now.minute(), DEC);
+ Serial.print(':');
+ Serial.print(now.second(), DEC);
+ Serial.print(" Date: ");
+ Serial.print(now.month(), DEC);
+ Serial.print('/');
+ Serial.print(now.day(), DEC);
+ Serial.print('/');
+ Serial.print(now.year(), DEC);
+ Serial.print(" (");
+ Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+ Serial.print(") ");
+ Serial.println();
+ delay(5000);
+ 
+// Stepper Motor 
   if (*pin_l & 0x01){
     Serial.print("rotate ");
     // 2048 / 8 = 256
@@ -147,7 +187,6 @@ else if (*pin_l & 0x02){
     myStepper.step(stepsPerRev);
     delay(500);
   }
-
 
 //Temp. and Humd. measure
 //If device works and detects temp or humd, runs the code
