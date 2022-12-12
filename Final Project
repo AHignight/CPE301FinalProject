@@ -10,6 +10,16 @@
 #include <Wire.h>
 #include <RTClib.h>
 
+// ADC Register
+volatile unsigned char* my_ADMUX = (unsigned char) 0x7C;
+volatile unsigned char* my_ADCSRB = (unsigned char) 0x7B;
+volatile unsigned char* my_ADCSRA = (unsigned char) 0x7A;
+volatile unsigned int* my_ADC_DATA = (unsigned char) 0x78;
+
+volatile unsigned char* port_F = (unsigned char) 0x31;
+volatile unsigned char* ddr_F = (unsigned char) 0x30;
+volatile unsigned char* pin_F = (unsigned char) 0x2F;
+
 // RTC days of the week array
 RTC_DS1307 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
@@ -62,35 +72,11 @@ volatile usigned char* port_d = (usigned char*) 0x0B;
 volatile usigned char* ddr_d = (usigned char*) 0x0A;
 volatile usigned char* pin_d = (usigned char*) 0x09;
 
-// ADC Register 
-volatile unsigned char* my_ADMUX = (unsigned char*) 0x7C;
-volatile unsigned char* my_ADCSRB = (unsigned char*) 0x7B;
-volatile unsigned char* my_ADCSRA = (unsigned char*) 0x7A;
-volatile unsigned char* my_ADC_Data = (unsigned char*) 0x78;
-
 // External ISR Registers Control and Mask
 volatile unsigned char* my_ECIRA = (unsigned char*) 0x69;
 volatile unsigned char* my_EIMSK = (unsigned char*) 0x3D;
 int count = 0;
 
-// Initialize ADC
-void adc_init()
-{
-  // setup the ADC A register
-  *my_ADCSRA |= 0b10000000; // set bit   7 to 1 to enable the ADC
-  *my_ADCSRA &= 0b11011111; // clear bit 5 to 0 to disable the ADC trigger mode
-  *my_ADCSRA &= 0b11011111; // clear bit 5 to 0 to disable the ADC interrupt
-  *my_ADCSRA &= 0b11011111; // clear bit 5 to 0 to set prescaler selection to slow reading
-  // setup the ADC B register
-  *my_ADCSRB &= 0b11110111; // clear bit 3 to 0 to reset the channel and gain bits
-  *my_ADCSRB &= 0b11111000; // clear bit 2-0 to 0 to set free running mode
-  // setup the MUX Register
-  *my_ADMUX  &= 0b01111111; // clear bit 7 to 0 for AVCC analog reference
-  *my_ADMUX  |= 0b01000000; // set bit   6 to 1 for AVCC analog reference
-  *my_ADMUX  &= 0b11011111; // clear bit 5 to 0 for right adjust result
-  *my_ADMUX  &= 0b11011111; // clear bit 5 to 0 for right adjust result
-  *my_ADMUX  &= 0b11100000; // clear bit 4-0 to 0 to reset the channel and gain bits
-}
 /*
 // ISR
 ISR(INT2_vect){
@@ -113,9 +99,14 @@ else {
 } 
 */
 void setup() {
-// RTC setup
  while (!Serial); 
  Serial.begin(9600);
+ // ADC setup
+   adc_init();
+  // set PF2 as input with pullup resistor;
+  *ddr_F &= 0x00;
+  *port_F |= 0xFF;
+  // RTC setup
  if (! rtc.begin()) {
    Serial.println("Couldn't find RTC");
    while (1);
@@ -160,6 +151,11 @@ void loop() {
  Serial.print(") ");
  Serial.println();
  delay(5000);
+ 
+ // get the reading from the ADC
+unsigned int adc_reading = adc_read(0); // number used is Analog pin Number
+// print it to the serial port
+Serial.println(adc_reading);
  
 // Stepper Motor 
   if (*pin_l & 0x01){
@@ -236,6 +232,56 @@ if(measure_environment(&temp, &humd) == true){
     //6000 is 1 min, change around to test
     delay(6000); 
 }    
+
+void adc_init()
+{
+  // set up the A register
+  *my_ADCSRA |= 0x80; // set bit   7 to 1 to enable the ADC
+  *my_ADCSRA &= 0xDF; // clear bit 5 to 0 to disable the ADC trigger mode
+  *my_ADCSRA &= 0xF7; // clear bit 3 to 0 to disable the ADC interrupt
+  *my_ADCSRA &= 0xF8; // clear bit 2-0 to 0 to set prescaler selection to slow reading
+  
+  // set up the B register
+  *my_ADCSRB &= 0xF7; // clear bit 3 to 0 to reset the channel and gain bits
+  *my_ADCSRB &= 0xF8; // clear bit 2-0 to 0 to set free running mode
+  
+  // set up the MUX Register
+  *my_ADMUX  &= 0x7F; // clear bit 7 to 0 for AVCC analog reference
+  *my_ADMUX  |= 0x40; // set bit   6 to 1 for AVCC analog reference
+  *my_ADMUX  &= 0xDF; // clear bit 5 to 0 for right adjust result
+  *my_ADMUX  &= 0xE0; // clear bit 4-0 to 0 to reset the channel and gain bits
+}
+
+unsigned int adc_read(unsigned char adc_channel_num)
+{
+  // reset the channel and gain bits
+  *my_ADMUX  &= 0xE0;
+  
+  // clear the channel selection bits
+  *my_ADCSRB &= 0xF7;
+  
+  // set the channel number
+  if(adc_channel_num > 7)
+  {
+    // set the channel selection bits, but remove the most significant bit (bit 3)
+    adc_channel_num -= 8;
+    
+    // set MUX bit 
+    *my_ADCSRB |= 0x08;
+  }
+  
+  // set the channel selection bits
+  *my_ADMUX  += adc_channel_num;
+  
+  // set bit 6 of ADCSRA to 1 to start a conversion
+  *my_ADCSRA |= 0x40;
+  
+  // wait for the conversion to complete
+  while((*my_ADCSRA & 0x40)==1);
+  
+  // return the result in the ADC data register
+  return *my_ADC_DATA;
+}
 
 // Enables the timer and interrupts
 void setup_timer_registers() {
