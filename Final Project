@@ -293,6 +293,89 @@ void idle_state() {
   else if (t > TEMPERATURE_THRESHOLD_F) stat = temp;
 }
 
+void error_state() {
+  *port_b |= 0b00100000; // Turn on red LED
+  *port_b &= 0b00100000; // Turn off other LEDs
+  
+  lcd.clear();
+  lcd.print("Low Water");
+
+  unsigned int w = water_level();
+
+  // Wait for water level to increase
+  while (w < WATER_LEVEL_THRESHOLD) {
+    delay(1000);
+    w = water_level();
+    lcd.setCursor(0, 1);
+    lcd.print("Level:");
+    lcd.setCursor(7, 1);
+    lcd.print(w);
+}
+  
+  // Water level is now okay
+  stat = idle;
+  lcd.clear();
+}
+
+void running_state()
+{
+  *port_b |= 0b00010000; // Enable fan and running LED
+  *port_b &= 0b00010000; // Disable other LEDs
+  float f = temperatureRead(true);
+  float h = humidity();
+
+  // Check water level and temperature
+  if (water_level() < WATER_LEVEL_THRESHOLD) stat = water;
+  else if ( f > TEMPERATURE_THRESHOLD_F ) {
+    delay(1000);
+    Serial.print("Temp: ");
+    Serial.print(f);
+    Serial.print('\n');
+    lcd_th(f, h);
+    return running_state();
+  }
+  else {
+    lcd.clear();
+    stat = idle;
+  }
+}
+
+/*///////////////////
+ UTILITY FUNCTIONS
+///////////////////*/
+
+// GET WATER LEVEL FROM ANALOG PORT 0
+unsigned int water_level() {
+  return adc_read(WATER_LEVEL_PORT);
+}
+
+// GET TEMPERATURE FROM DHT11
+float temperatureRead(bool F) {
+  float t;
+  if (F) t = dht.readTemperature(true); // Fahrenheit
+  else t = dht.readTemperature();       // Celsius
+  if (isnan(t)) Serial.println(F("Failed to read temperature from DHT sensor!"));
+  return t;
+}
+
+// GET HUMIDITY FROM DHT11
+float humidity() {
+  float h = dht.readHumidity();
+  if (isnan(h)) Serial.println(F("Failed to read humidity from DHT sensor!"));
+  return h;
+}
+
+// OUTPUT TEMPERATURE AND HUMIDITY TO LCD
+void lcd_th(float t, float h) {
+  lcd.setCursor(0, 0);
+  lcd.print("Temp:  Humidity:");
+  lcd.setCursor(0, 1);
+  lcd.print(t);
+  lcd.setCursor(7, 1);
+  lcd.print(h);
+}
+
+// ADC setup
 void adc_init()
 {
   // set up the A register
