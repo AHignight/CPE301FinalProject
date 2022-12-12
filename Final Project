@@ -178,7 +178,26 @@ void loop() {
     Serial.print(stepsPerRev / 5.68889 ); 
     Serial.println("° clockwise");
     myStepper.step(-stepsPerRev); //negative value sends stepPerRev in reverse direvtion
-    delay(500);
+    
+    //Displays the time and angle the vent was changed on the lcd monitor
+    lcd.print("Vent closed ");
+    lcd.print(stepsPerRev / 5.68889);
+    lcd.print(" degrees on: ");
+    lcd.print(daysOfTheWeek[now.dayOfTheWeek()]);
+    lcd.print(" ");
+    lcd.print(now.month(), DEC);
+    lcd.print('/');
+    lcd.print(now.day());
+    lcd.print('/');
+    lcd.println(now.year(), DEC);
+    lcd.print(" at ");
+    lcd.print(now.hour(), DEC);
+    lcd.print(':');
+    lcd.print(now.minute(), DEC);
+    lcd.print(':');
+    lcd.print(now.second(), DEC);
+    
+    delay(15000);
   }
 
 else if (*pin_l & 0x02){
@@ -186,7 +205,26 @@ else if (*pin_l & 0x02){
     Serial.print(stepsPerRev / 5.68889 );
     Serial.println("° counter-clockwise");
     myStepper.step(stepsPerRev);
-    delay(500);
+    
+    //Displays the time and angle the vent was changed on the lcd monitor
+    lcd.print("Vent closed ");
+    lcd.print(stepsPerRev / 5.68889);
+    lcd.print(" degrees on: ");
+    lcd.print(daysOfTheWeek[now.dayOfTheWeek()]);
+    lcd.print(" ");
+    lcd.print(now.month(), DEC);
+    lcd.print('/');
+    lcd.print(now.day());
+    lcd.print('/');
+    lcd.println(now.year(), DEC);
+    lcd.print(" at ");
+    lcd.print(now.hour(), DEC);
+    lcd.print(':');
+    lcd.print(now.minute(), DEC);
+    lcd.print(':');
+    lcd.print(now.second(), DEC);
+    
+    delay(15000);
   }
 
 //Temp. and Humd. measure
