@@ -98,6 +98,26 @@ else {
 }
 } 
 */
+
+// WATER LEVEL ANALOG PORT A0
+unsigned char WATER_LEVEL_PORT = 0;
+
+// THRESHOLDS
+#define TEMPERATURE_THRESHOLD_F 80.0000
+#define TEMPERATURE_THRESHOLD_C 26.6667
+#define WATER_LEVEL_THRESHOLD 100
+
+// Flags depicting what state we are in.
+enum state {
+   off = 0,
+   idle = 1,
+   temp = 2,
+   water = 3
+};
+
+// Begin in off state.
+enum state stat = off;
+
 void setup() {
  while (!Serial); 
  Serial.begin(9600);
@@ -213,25 +233,65 @@ else if (*pin_l & 0x02){
     
     delay(15000);
   }
+  // Choose State Space
+  switch(stat) {
+    case off:
+      Serial.println("Disabled State");
+      disabled_state();
+      break;
+    case idle:
+      Serial.println("Idle State");
+      idle_state();
+      break;
+    case water:
+      Serial.println("Error State");
+      error_state();
+      break;
+    case temp:
+      Serial.println("Running State");
+      running_state();
+      break;
+    default:
+      break;
+  }
+}
 
-//Temp. and Humd. measure
-//If device works and detects temp or humd, runs the code
-if(measure_environment(&temp, &humd) == true){
-    // Calculate temp from celcius to farenheight
-    float op1 = temp*1.8;
-    float op2 = op1 + 32;
-    //printing valeus onto lcd screen
-    lcd.setCursor(0,0);     //col 0 line 0 start
-    lcd.print("Temperature=");
-    lcd.print(op2,1);
-    lcd.println("deg.F");
-    lcd.setCursor(0,1);      //col 0 line 1 start
-    lcd.print("Humidity = ");
-    lcd.print(humd,1);
-    lcd.println("% ");
-    //6000 is 1 min, change around to test
-    delay(6000); 
-}    
+/*///////////////////
+  MACHINE STATES
+///////////////////*/
+void disabled_state() { // Or off state
+  lcd.clear();
+  lcd.noDisplay();
+
+  *port_b &= 0b10000001; // Turn off all LEDs
+  *port_b |= 0b00001000; // Turn on Yellow LED
+  
+  // Listen to PB7 and await low signal
+  while ( (*pin_b & (1 << 7)) == 0) { }
+
+  // Start button pressed and initialize idle state.
+  stat = idle;
+  lcd.display();
+}
+
+void idle_state() {
+  *port_b |= 0b01000000; // Turn on green LED
+  *port_b &= 0b01000000; // Turn off other LEDs & fan
+  
+  // Get water level, temperature, and humidity
+  unsigned int w = water_level();
+  float t = temperatureRead(true);
+  float h = humidity();
+
+  // Display temperature and humidity to screen
+  lcd_th(t, h);
+
+  // Check water level.
+  if (w < WATER_LEVEL_THRESHOLD) stat = water;
+  
+  // Check temperature.
+  else if (t > TEMPERATURE_THRESHOLD_F) stat = temp;
+}
 
 void adc_init()
 {
