@@ -427,7 +427,7 @@ unsigned int adc_read(unsigned char adc_channel_num)
   return *my_ADC_DATA;
 }
 
-/comment out
+//comment out
 /*
 // Enables the timer and interrupts
 void setup_timer_registers() {
@@ -477,4 +477,4 @@ static bool measure_environment(float *temp, float *humd)
   }
   return(false);
 }
-*/
+*//
