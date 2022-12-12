@@ -9,6 +9,7 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 #include <RTClib.h>
+#include <Stepper.h>
 
 // ADC Register
 volatile unsigned char* my_ADMUX = (unsigned char) 0x7C;
@@ -68,9 +69,9 @@ volatile unsigned char* ddr_l = (unsigned char*) 0x10A;
 volatile unsigned char* pin_l = (unsigned char*) 0x109;
 
 // Port D Registers Pointers
-volatile usigned char* port_d = (usigned char*) 0x0B;
-volatile usigned char* ddr_d = (usigned char*) 0x0A;
-volatile usigned char* pin_d = (usigned char*) 0x09;
+volatile unsigned char* port_d = (unsigned char*) 0x0B;
+volatile unsigned char* ddr_d = (unsigned char*) 0x0A;
+volatile unsigned char* pin_d = (unsigned char*) 0x09;
 
 // External ISR Registers Control and Mask
 volatile unsigned char* my_ECIRA = (unsigned char*) 0x69;
