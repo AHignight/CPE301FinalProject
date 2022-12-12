@@ -28,9 +28,9 @@ const int stepsPerRev = 256;
 Stepper myStepper(stepsPerRev, 8, 9, 10, 11); //initializes stepper motor on pins 8-11
 
 // Definitions libraries, global definitions and declarations, etc
-int current_state;
-int state_change = 0;
-float Threshold_Temperature = 20;
+int current_state; //dummy variable
+int state_change = 0; //dummy variable
+float Threshold_Temperature = 20; //dummy variable
 
 // Declaring variable for temp and humd which are decimal values
 float temp;
