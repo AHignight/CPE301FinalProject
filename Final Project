@@ -20,17 +20,9 @@ LiquidCrystal lcd(12,11,5,4,3,2);
 int DHT_SENSOR_PIN = 9;
 DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 
-// Bool Functions declarations
-bool disabled_state, idle_state, running_state, error_state;
-
 // Stepper Motor
 const int stepsPerRev = 256;
 Stepper myStepper(stepsPerRev, 8, 9, 10, 11); //initializes stepper motor on pins 8-11
-
-// Definitions libraries, global definitions and declarations, etc
-int current_state; //dummy variable
-int state_change = 0; //dummy variable
-float Threshold_Temperature = 20; //dummy variable
 
 // Declaring variable for temp and humd which are decimal values
 float temp;
@@ -99,7 +91,7 @@ void adc_init()
   *my_ADMUX  &= 0b11011111; // clear bit 5 to 0 for right adjust result
   *my_ADMUX  &= 0b11100000; // clear bit 4-0 to 0 to reset the channel and gain bits
 }
-
+/*
 // ISR
 ISR(INT2_vect){
 count ++;
@@ -119,7 +111,7 @@ else {
 	disabled_state = true;
 }
 } 
-
+*/
 void setup() {
 // RTC setup
  while (!Serial); 
@@ -144,7 +136,6 @@ void setup() {
   
   //Setting up lcd for temp/humd
   lcd.begin(16, 2);  	 //enables 16x2 lcd screen spaces
-  
   pinMode (inputW, INPUT);
   pinMode (outputW, OUTPUT);
 }
@@ -246,22 +237,6 @@ if(measure_environment(&temp, &humd) == true){
     delay(6000); 
 }    
 
-//Water Level Detection
-  Waterval = digitalRead(inputW);
-   if(Waterval == 0){
-    digitalWrite(inputW, 0);
-    Serial.println("EMPTY");
-   }
-   else if(Waterval == LOW){
-    digitalWrite(inputW, HIGH);
-    Serial.println("HIGH");
-   }
-   else if(Waterval == HIGH){
-    digitalWrite(inputW, HIGH);
-    Serial.println("HIGH");
-   }
-  
-}
 // Enables the timer and interrupts
 void setup_timer_registers() {
 // Setup the timer control registers.
