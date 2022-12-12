@@ -1,6 +1,7 @@
 // Name: Andrew Hignight, Mathew Rios, Ean McNeil, Michael Wang
 // Date: 12/1/2022
 
+// Libraries
 #include <dht_nonblocking.h>
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
@@ -9,16 +10,17 @@
 #include <Wire.h>
 #include <RTClib.h>
 
-//RTC days of the week array
+// RTC days of the week array
 RTC_DS1307 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
+// LCD declarations
 LiquidCrystal lcd(12,11,5,4,3,2); 
 #define DHT_SENSOR_TYPE DHT_TYPE_11
 int DHT_SENSOR_PIN = 9;
 DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 
-// Bool Functions
+// Bool Functions declarations
 bool disabled_state, idle_state, running_state, error_state;
 
 // Stepper Motor
@@ -30,10 +32,9 @@ int current_state;
 int state_change = 0;
 float Threshold_Temperature = 20;
 
-// declaring variable for temp and humd which are decimal values
+// Declaring variable for temp and humd which are decimal values
 float temp;
 float humd;
-
 int Waterval = 0;  // holds the value
 int inputW = 7; // sensor pin used
 int outputW = 11; //output to the lcd
