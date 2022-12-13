@@ -38,6 +38,7 @@ DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 
 // Global Variables
 char error_flag = 0;
+char disable_flag = 0;
 
 // Declaring Functions
 void setup_timer_registers();
@@ -81,37 +82,33 @@ volatile unsigned char* port_d = (unsigned char*) 0x0B;
 volatile unsigned char* ddr_d = (unsigned char*) 0x0A;
 volatile unsigned char* pin_d = (unsigned char*) 0x09;
 
-// Port K Registers
-volatile unsigned char* port_k = (unsigned char*) 0x108;  
-volatile unsigned char* ddr_k = (unsigned char*) 0x107;
-volatile unsigned char* pin_k = (unsigned char*) 0x106;
-
 // External ISR Registers Control and Mask
 volatile unsigned char* my_ECIRA = (unsigned char*) 0x69;
 volatile unsigned char* my_EIMSK = (unsigned char*) 0x3D;
 int count = 0;
 
-/*
-// ISR
-ISR(INT2_vect){
-count ++;
-state_change = 1;
-// **
-if(count%2 == 1) {
-	disabled_state = false;
-	running_state = false;
-	error_state = false;
-	idle_state = true;
+ISR(TIMER0_vect) //ISR for Timer0
+{
+  if(disable_flag == 1){
+    disabled_state();
+  } else {
+    int water_level = adc_read(WATER_LEVEL_PORT);
+    
+    if(water_level < WATER_LEVEL_THRESHOLD) {
+      // The water level is too low
+      error_state();
+    } else {
+      // Check if temperature is above the threshold
+      if(current_temp < TEMPERATURE_THRESHOLD_C) {
+        // Temperature is low; stop the fan
+	idle_state();
+      } else {
+      // Temperature is high; start the fan
+      running_state();
+      }
+    }
+  }
 }
-// **
-else {
-	idle_state = false;
-	running_state = false;
-	error_state = false;
-	disabled_state = true;
-}
-} 
-*/
 
 // WATER LEVEL ANALOG PORT A0
 unsigned char WATER_LEVEL_PORT = 0;
@@ -334,8 +331,8 @@ void error_state() {
 
 void running_state()
 {
-  *port_k |= 0b00001000; // Enable fan and running LED
-  *port_k &= 0b00001000; // Disable other LEDs
+  *port_b |= 0b00010000; // Enable fan and running LED
+  *port_b &= 0b00010000; // Disable other LEDs
   float f = temperatureRead(true);
   float h = humidity();
 
@@ -454,24 +451,24 @@ void setup_timer_registers() {
 
 // When water level is too low
 void error_state() {
-  *port_k |= 0b00000001;    // Turn on the red LED
-  *port_k &= 0b00011111;    // Turn off the rest
+  *port_b |= 0b00010000;    // Turn on the red LED
+  *port_b &= 0b00011111;    // Turn off the rest
   *port_f &= 0b11110111;    // Turn off the motor
   error_flag = 1;
 }
 
 // When monitoring and fan are disabled using an on/off button
 void disabled_state() {
-  *port_k |= 0b00000010;    // Turn on the yellow LED
-  *port_k &= 0b00101111;    // Turn off the rest
+  *port_b |= 0b00100000;    // Turn on the yellow LED
+  *port_b &= 0b00101111;    // Turn off the rest
   *port_f &= 0b11110111;    // Turn off the motor
   error_flag = 0;
 }
 
 // When water level is and temperature is low
 void idle_state() {
-  *port_k |= 0b00000100;    // Turn on the green LED
-  *port_k &= 0b01001111;    // Turn off the rest
+  *port_b |= 0b01000000;    // Turn on the green LED
+  *port_b &= 0b01001111;    // Turn off the rest
   *port_f &= 0b11110111;    // Turn off the motor
   error_flag = 0;
 }
