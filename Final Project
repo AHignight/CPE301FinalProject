@@ -31,9 +31,9 @@ RTC_DS1307 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 // LCD declarations
-LiquidCrystal lcd(11,10,9,8,7,6); 
+LiquidCrystal lcd(11,10,9,8,7,6); //sets lcd pin locations at from pins 6-11 (PH3-PH6,PB4,PB5)
 #define DHT_SENSOR_TYPE DHT_TYPE_11
-int DHT_SENSOR_PIN = 12;
+int DHT_SENSOR_PIN = 12; //sets pin to 12 (PB6)
 DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 
 // Global Variables
@@ -370,6 +370,8 @@ void setup_timer_registers() {
 
 // When water level is too low
 void error_state() {
+
+//sets pin to PK0
   *port_k |= 0b00000001;    // Turn on the red LED
   *port_k &= 0b00001111;    // Turn off the rest
   *port_k &= 0b11110111;    // Turn off the motor
@@ -378,6 +380,8 @@ void error_state() {
 
 // When monitoring and fan are disabled using an on/off button
 void disabled_state() {
+
+//sets pin to PK1
   *port_k |= 0b00000010;    // Turn on the yellow LED
   *port_k &= 0b00001111;    // Turn off the rest
   *port_k &= 0b11110111;    // Turn off the motor
@@ -386,6 +390,8 @@ void disabled_state() {
 
 // When water level is and temperature is low
 void idle_state() {
+
+//sets pin to PK2
   *port_k |= 0b00000100;    // Turn on the green LED
   *port_k &= 0b00001111;    // Turn off the rest
   *port_k &= 0b11110111;    // Turn off the motor
@@ -394,6 +400,8 @@ void idle_state() {
 
 // When water level is good but temperature is too high
 void running_state() {
+
+//sets pin to PK3
   *port_k |= 0b00001000;    // Turn on the blue LED
   *port_k &= 0b00001111;    // Turn off the rest
   *port_k |= 0b00001000;    // Turn on the motor
