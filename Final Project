@@ -371,6 +371,7 @@ float temperatureRead(bool F) {
   if (F) t = dht.readTemperature(true); // Fahrenheit
   else t = dht.readTemperature();       // Celsius
   if (isnan(t)) Serial.println(F("Failed to read temperature from DHT sensor!"));
+  current_temp = t;
   return t;
 }
 
