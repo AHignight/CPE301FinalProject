@@ -85,6 +85,11 @@ volatile unsigned char* port_d = (unsigned char*) 0x0B;
 volatile unsigned char* ddr_d = (unsigned char*) 0x0A;
 volatile unsigned char* pin_d = (unsigned char*) 0x09;
 
+// Port K Registers
+volatile unsigned char* port_k = (unsigned char*) 0x108; 
+volatile unsigned char* ddr_k = (unsigned char*) 0x107;
+volatile unsigned char* pin_k = (unsigned char*) 0x106;
+
 // External ISR Registers Control and Mask
 volatile unsigned char* my_ECIRA = (unsigned char*) 0x69;
 volatile unsigned char* my_EIMSK = (unsigned char*) 0x3D;
