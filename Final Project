@@ -16,18 +16,16 @@
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
-// ADC Register
-volatile unsigned char* my_ADMUX = (unsigned char) 0x7C;
-volatile unsigned char* my_ADCSRB = (unsigned char) 0x7B;
-volatile unsigned char* my_ADCSRA = (unsigned char) 0x7A;
-volatile unsigned int* my_ADC_DATA = (unsigned char) 0x78;
+// Global Variables
+char error_flag = 0;
+char disable_flag = 0;
+unsigned char WATER_LEVEL_PORT = 0; // WATER LEVEL ANALOG PORT A0
+int current_temp = 0; // Water Sensor
+int count = 0;
 
-volatile unsigned char* port_F = (unsigned char) 0x31;
-volatile unsigned char* ddr_F = (unsigned char) 0x30;
-volatile unsigned char* pin_F = (unsigned char) 0x2F;
-
-// RTC days of the week array
+// RTC module
 RTC_DS1307 rtc;
+// RTC days of the week array
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 // LCD declarations
@@ -36,12 +34,9 @@ LiquidCrystal lcd(11,10,9,8,7,6); //sets lcd pin locations at from pins 6-11 (PH
 int DHT_SENSOR_PIN = 12; //sets pin to 12 (PB6)
 DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 
-// Global Variables
-char error_flag = 0;
-char disable_flag = 0;
-
-// Water Sensor
-int current_temp = 0;
+// Stepper Motor
+const int stepsPerRev = 256;
+Stepper myStepper(stepsPerRev, 2, 3, 4, 5); //initializes stepper motor on pins 8-11
 
 // Declaring Functions
 void setup_timer_registers();
@@ -50,37 +45,38 @@ void idle_state();
 void running_state();
 void disabled_state();
 
-// Stepper Motor
-const int stepsPerRev = 256;
-Stepper myStepper(stepsPerRev, 2, 3, 4, 5); //initializes stepper motor on pins 8-11
-
 // Define data registers and ports
 #define SET_OUTPUT(ddr, pin) *ddr |= (0x01 << pin);
 #define SET_INPUT(ddr, pin) *ddr &= ~(0x01 << pin);
 #define SET_HIGH(port, pin) *port |= (0x01 << pin);
 #define SET_LOW(port, pin) *port &= ~(0x01 << pin);
 
-// Port A Register Pointers
+// Register F
+volatile unsigned char* port_F = (unsigned char) 0x31;
+volatile unsigned char* ddr_F = (unsigned char) 0x30;
+volatile unsigned char* pin_F = (unsigned char) 0x2F;
+
+// Port A Register 
 volatile unsigned char* port_a = (unsigned char*) 0x22;
 volatile unsigned char* ddr_a = (unsigned char*) 0x21;
 volatile unsigned char* pin_a = (unsigned char*) 0x20;
 
-// Port B Register Pointers
+// Port B Register 
 volatile unsigned char* port_b = (unsigned char*) 0x25;
 volatile unsigned char* ddr_b = (unsigned char*) 0x24;
 volatile unsigned char* pin_b = (unsigned char*) 0x23;
 
-// Define Port F Register Pointers
+// Define Port F Register 
 volatile unsigned char* port_f = (unsigned char*) 0x31; 
 volatile unsigned char* ddr_f  = (unsigned char*) 0x30; 
 volatile unsigned char* pin_f  = (unsigned char*) 0x2F; 
 
-// Port L Registers Pointers
+// Port L Registers 
 volatile unsigned char* port_l = (unsigned char*) 0x10B;
 volatile unsigned char* ddr_l = (unsigned char*) 0x10A;
 volatile unsigned char* pin_l = (unsigned char*) 0x109;
 
-// Port D Registers Pointers
+// Port D Registers 
 volatile unsigned char* port_d = (unsigned char*) 0x0B;
 volatile unsigned char* ddr_d = (unsigned char*) 0x0A;
 volatile unsigned char* pin_d = (unsigned char*) 0x09;
@@ -93,14 +89,16 @@ volatile unsigned char* pin_k = (unsigned char*) 0x106;
 // External ISR Registers Control and Mask
 volatile unsigned char* my_ECIRA = (unsigned char*) 0x69;
 volatile unsigned char* my_EIMSK = (unsigned char*) 0x3D;
-int count = 0;
 
-// WATER LEVEL ANALOG PORT A0
-unsigned char WATER_LEVEL_PORT = 0;
+// ADC Register
+volatile unsigned char* my_ADMUX = (unsigned char) 0x7C;
+volatile unsigned char* my_ADCSRB = (unsigned char) 0x7B;
+volatile unsigned char* my_ADCSRA = (unsigned char) 0x7A;
+volatile unsigned int* my_ADC_DATA = (unsigned char) 0x78;
 
 // THRESHOLDS
-#define TEMPERATURE_THRESHOLD_F 80.0000
-#define TEMPERATURE_THRESHOLD_C 26.6667
+#define TEMPERATURE_THRESHOLD_F 70.0000
+#define TEMPERATURE_THRESHOLD_C 21.1111
 #define WATER_LEVEL_THRESHOLD 100
 
 // Flags depicting what state we are in.
@@ -110,10 +108,10 @@ enum state {
    temp = 2,
    water = 3
 };
-
 // Begin in off state.
 enum state stat = off;
 
+// ISR
 ISR(TIMER0_vect) //ISR for Timer0
 {
   if(disable_flag == 1){
@@ -169,12 +167,10 @@ void setup() {
   lcd.begin(16, 2);  	 //enables 16x2 lcd screen spaces
   // pinMode (inputW, INPUT);
   // pinMode (outputW, OUTPUT);
-  
   dht.begin();
 }
 
 void loop() {
-
 if (*pin_a & 0b00000010){
   disable_flag = 1;
   for(volatile unsigned int i=0; i < 1000; i++);
@@ -244,7 +240,6 @@ Serial.println(adc_reading);
     Serial.print(now.minute(), DEC);
     Serial.print(':');
     Serial.println(now.second(), DEC);
-    
     delay(100);
   }
 
@@ -271,7 +266,6 @@ else if (*pin_l & 0x02){
     Serial.print(now.minute(), DEC);
     Serial.print(':');
     Serial.println(now.second(), DEC);
-    
     delay(100);
   }
   // Choose State Space
@@ -337,11 +331,9 @@ void adc_init()
   *my_ADCSRA &= 0xDF; // clear bit 5 to 0 to disable the ADC trigger mode
   *my_ADCSRA &= 0xF7; // clear bit 3 to 0 to disable the ADC interrupt
   *my_ADCSRA &= 0xF8; // clear bit 2-0 to 0 to set prescaler selection to slow reading
-  
   // set up the B register
   *my_ADCSRB &= 0xF7; // clear bit 3 to 0 to reset the channel and gain bits
   *my_ADCSRB &= 0xF8; // clear bit 2-0 to 0 to set free running mode
-  
   // set up the MUX Register
   *my_ADMUX  &= 0x7F; // clear bit 7 to 0 for AVCC analog reference
   *my_ADMUX  |= 0x40; // set bit   6 to 1 for AVCC analog reference
@@ -353,29 +345,22 @@ unsigned int adc_read(unsigned char adc_channel_num)
 {
   // reset the channel and gain bits
   *my_ADMUX  &= 0xE0;
-  
   // clear the channel selection bits
   *my_ADCSRB &= 0xF7;
-  
   // set the channel number
   if(adc_channel_num > 7)
   {
     // set the channel selection bits, but remove the most significant bit (bit 3)
     adc_channel_num -= 8;
-    
     // set MUX bit 
     *my_ADCSRB |= 0x08;
   }
-  
   // set the channel selection bits
   *my_ADMUX  += adc_channel_num;
-  
   // set bit 6 of ADCSRA to 1 to start a conversion
   *my_ADCSRA |= 0x40;
-  
   // wait for the conversion to complete
   while((*my_ADCSRA & 0x40)==1);
-  
   // return the result in the ADC data register
   return *my_ADC_DATA;
 }
@@ -400,7 +385,6 @@ void error_state() {
   
   lcd.clear();
   lcd.print("Water Level Low");
-
   unsigned int w = water_level();
 
   //measures water level until okay
@@ -415,7 +399,6 @@ void error_state() {
 
   stat = idle;
   lcd.clear();
-  
   error_flag = 1;
 }
 
@@ -429,13 +412,11 @@ void disabled_state() {
   
   stat = idle; //press start button and initiate idle state
   lcd.display();
-  
   error_flag = 0;
 }
 
 // When water level is and temperature is low
 void idle_state() {
-
 //sets pin to PK2
   *port_k |= 0b00000100;    // Turn on the green LED
   *port_k &= 0b00000100;    // Turn off the rest
@@ -462,7 +443,6 @@ void idle_state() {
 
 // When water level is good but temperature is too high
 void running_state() {
-
 //sets pin to PK3
   *port_k |= 0b00001000;    // Turn on the blue LED
   *port_k &= 0b00001000;    // Turn off the rest
@@ -484,8 +464,6 @@ void running_state() {
   }else{
     lcd.clear();
     stat = idle;
-    
   }
-  
   error_flag = 0; 
 }
