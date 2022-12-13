@@ -109,6 +109,29 @@ enum state {
 // Begin in off state.
 enum state stat = off;
 
+ISR(TIMER0_vect) //ISR for Timer0
+{
+  if(disable_flag == 1){
+    disabled_state();
+  } else {
+    int water_level = adc_read(WATER_LEVEL_PORT);
+    
+    if(water_level < WATER_LEVEL_THRESHOLD) {
+      // The water level is too low
+      error_state();
+    } else {
+      // Check if temperature is above the threshold
+      if(current_temp < TEMPERATURE_THRESHOLD_C) {
+        // Temperature is low; stop the fan
+	idle_state();
+      } else {
+      // Temperature is high; start the fan
+      running_state();
+      }
+    }
+  }
+}
+
 void setup() {
  while (!Serial); 
  Serial.begin(9600);
@@ -131,28 +154,7 @@ void setup() {
    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
  }
  
- ISR(TIMER0_vect) //ISR for Timer0
-{
-  if(disable_flag == 1){
-    disabled_state();
-  } else {
-    int water_level = adc_read(WATER_LEVEL_PORT);
-    
-    if(water_level < WATER_LEVEL_THRESHOLD) {
-      // The water level is too low
-      error_state();
-    } else {
-      // Check if temperature is above the threshold
-      if(current_temp < TEMPERATURE_THRESHOLD_C) {
-        // Temperature is low; stop the fan
-	idle_state();
-      } else {
-      // Temperature is high; start the fan
-      running_state();
-      }
-    }
-  }
-}
+
  
   // Stepper Motor
   myStepper.setSpeed(32); //sets stepper motor speed to 60 rpm
