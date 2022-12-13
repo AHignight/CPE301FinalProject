@@ -16,13 +16,6 @@
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
-// Global Variables
-char error_flag = 0;
-char disable_flag = 0;
-unsigned char WATER_LEVEL_PORT = 0; // WATER LEVEL ANALOG PORT A0
-int current_temp = 0; // Water Sensor
-int count = 0;
-
 // RTC module
 RTC_DS1307 rtc;
 // RTC days of the week array
@@ -37,6 +30,13 @@ DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 // Stepper Motor
 const int stepsPerRev = 256;
 Stepper myStepper(stepsPerRev, 2, 3, 4, 5); //initializes stepper motor on pins 8-11
+
+// Global Variables
+char error_flag = 0;
+char disable_flag = 0;
+unsigned char WATER_LEVEL_PORT = 0; // WATER LEVEL ANALOG PORT A0
+int current_temp = 0; // Water Sensor
+int count = 0;
 
 // Declaring Functions
 void setup_timer_registers();
