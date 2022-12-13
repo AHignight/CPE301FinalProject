@@ -456,7 +456,7 @@ void idle_state() {
   //Temp check
   else if (t > TEMPERATURE_THRESHOLD_F){
     stat = temp;
-  
+  }
   error_flag = 0;
 }
 
