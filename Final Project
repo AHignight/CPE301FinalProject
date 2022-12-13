@@ -129,6 +129,12 @@ void setup() {
  if (! rtc.begin()) {
    Serial.println("Couldn't find RTC");
    while (1);
+ void setup_timer_registers();
+ void error_state();
+ void idle_state();
+ void running_state();
+ void disabled_state();
+
  }
  if (! rtc.isrunning()) {
    Serial.println("RTC is NOT running!");
@@ -434,6 +440,7 @@ void setup_timer_registers() {
   TCCR0A |= 0b00000010;   // CTC mode, internal clk, no prescaler
   TCCR0B |= 0b00000001;   // Start the timer, no prescaler                    
   TIMSK0 |= 0b00000010;   // Enable Timer0 Compare Match A Interrupt
+  sei();		  // Enable interrupts
 }
 
 // When water level is too low
