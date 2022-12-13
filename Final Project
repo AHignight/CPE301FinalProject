@@ -141,8 +141,8 @@ void setup() {
   
   //Setting up lcd for temp/humd
   lcd.begin(16, 2);  	 //enables 16x2 lcd screen spaces
-  pinMode (inputW, INPUT);
-  pinMode (outputW, OUTPUT);
+  // pinMode (inputW, INPUT);
+  // pinMode (outputW, OUTPUT);
 }
 
 void loop() {
