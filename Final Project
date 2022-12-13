@@ -145,6 +145,7 @@ void setup() {
   // set PF2 as input with pullup resistor;
   *ddr_F &= 0x00;
   *port_F |= 0xFF;
+  *ddr_a |= 0x02;
   // RTC setup
  if (! rtc.begin()) {
    Serial.println("Couldn't find RTC");
@@ -173,6 +174,20 @@ void setup() {
 }
 
 void loop() {
+
+if (*pin_a & 0b00000010){
+  disable_flag = 1;
+  for(volatile unsigned int i=0; i < 1000; i++);
+  lcd.clear();
+  lcd.noDisplay();
+  while(*pin_a & 0b00000010);
+  disable_flag = 0;
+  lcd.display ();
+} else {
+// Reads temperature and humidity
+int t = dht.readTemperature();
+int h = dht.readHumidity();
+current_temp = t;
 
 unsigned int w = adc_read(WATER_LEVEL_PORT);
 float f = temperatureRead(true);
