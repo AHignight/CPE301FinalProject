@@ -31,14 +31,14 @@ RTC_DS1307 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 // LCD declarations
-LiquidCrystal lcd(12,11,5,4,3,2); 
+LiquidCrystal lcd(11,10,9,8,7,6); 
 #define DHT_SENSOR_TYPE DHT_TYPE_11
-int DHT_SENSOR_PIN = 9;
+int DHT_SENSOR_PIN = 12;
 DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 
 // Stepper Motor
 const int stepsPerRev = 256;
-Stepper myStepper(stepsPerRev, 8, 9, 10, 11); //initializes stepper motor on pins 8-11
+Stepper myStepper(stepsPerRev, 2, 3, 4, 5); //initializes stepper motor on pins 8-11
 
 // Define data registers and ports
 #define SET_OUTPUT(ddr, pin) *ddr |= (0x01 << pin);
