@@ -375,6 +375,25 @@ void error_state() {
   *port_k |= 0b00000001;    // Turn on the red LED
   *port_k &= 0b00001111;    // Turn off the rest
   *port_k &= 0b11110111;    // Turn off the motor
+  
+  lcd.clear();
+  lcd.print("Water Level Low");
+
+  unsigned int w = water_level();
+
+  //measures water level until okay
+  while(w < WATER_LEVEL_THRESHOLD){
+    delay(1000);
+    w = water_level();
+    lcd.setCursor(0,1);
+    lcd.print("Level: ");
+    lcd.setCursor(7,1);
+    lcd.print(w);
+  }
+
+  stat = idle;
+  lcd.clear();
+  
   error_flag = 1;
 }
 
@@ -385,6 +404,10 @@ void disabled_state() {
   *port_k |= 0b00000010;    // Turn on the yellow LED
   *port_k &= 0b00001111;    // Turn off the rest
   *port_k &= 0b11110111;    // Turn off the motor
+  
+  stat = idle; //press start button and initiate idle state
+  lcd.display();
+  
   error_flag = 0;
 }
 
@@ -395,6 +418,23 @@ void idle_state() {
   *port_k |= 0b00000100;    // Turn on the green LED
   *port_k &= 0b00001111;    // Turn off the rest
   *port_k &= 0b11110111;    // Turn off the motor
+  
+  //gets measurements
+  unsigned int w = water_level();
+  float t = temperatureRead(true);
+  float h = humidity();
+
+  //Displays current readings
+  lcd_th(t,h);
+
+  //Water level check
+  if(w < WATER_LEVEL_THRESHOLD){
+    stat = water;
+  }
+  //Temp check
+  else if (t > TEMPERATURE_THRESHOLD_F){
+    stat = temp;
+  
   error_flag = 0;
 }
 
@@ -405,6 +445,26 @@ void running_state() {
   *port_k |= 0b00001000;    // Turn on the blue LED
   *port_k &= 0b00001111;    // Turn off the rest
   *port_k |= 0b00001000;    // Turn on the motor
+  
+  float f = temperatureRead(true);
+  float h = humidity();
+
+  //Water and Temp check
+  if(water_level() < WATER_LEVEL_THRESHOLD){
+    stat = water;
+  }else if(f > TEMPERATURE_THRESHOLD_F){
+    delay(1000);
+    Serial.print("Temperature: ");
+    Serial.print(f);
+    Serial.print('\n');
+    lcd_th(f,h);
+    return running_state();
+  }else{
+    lcd.clear();
+    stat = idle;
+    
+  }
+  
   error_flag = 0; 
 }
 
