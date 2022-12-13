@@ -90,29 +90,6 @@ volatile unsigned char* my_ECIRA = (unsigned char*) 0x69;
 volatile unsigned char* my_EIMSK = (unsigned char*) 0x3D;
 int count = 0;
 
-ISR(TIMER0_vect) //ISR for Timer0
-{
-  if(disable_flag == 1){
-    disabled_state();
-  } else {
-    int water_level = adc_read(WATER_LEVEL_PORT);
-    
-    if(water_level < WATER_LEVEL_THRESHOLD) {
-      // The water level is too low
-      error_state();
-    } else {
-      // Check if temperature is above the threshold
-      if(current_temp < TEMPERATURE_THRESHOLD_C) {
-        // Temperature is low; stop the fan
-	idle_state();
-      } else {
-      // Temperature is high; start the fan
-      running_state();
-      }
-    }
-  }
-}
-
 // WATER LEVEL ANALOG PORT A0
 unsigned char WATER_LEVEL_PORT = 0;
 
@@ -153,6 +130,29 @@ void setup() {
    // January 21, 2014 at 3am you would call:
    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
  }
+ 
+ ISR(TIMER0_vect) //ISR for Timer0
+{
+  if(disable_flag == 1){
+    disabled_state();
+  } else {
+    int water_level = adc_read(WATER_LEVEL_PORT);
+    
+    if(water_level < WATER_LEVEL_THRESHOLD) {
+      // The water level is too low
+      error_state();
+    } else {
+      // Check if temperature is above the threshold
+      if(current_temp < TEMPERATURE_THRESHOLD_C) {
+        // Temperature is low; stop the fan
+	idle_state();
+      } else {
+      // Temperature is high; start the fan
+      running_state();
+      }
+    }
+  }
+}
  
   // Stepper Motor
   myStepper.setSpeed(32); //sets stepper motor speed to 60 rpm
