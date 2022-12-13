@@ -221,7 +221,7 @@ Serial.println(adc_reading);
     Serial.print(':');
     Serial.print(now.minute(), DEC);
     Serial.print(':');
-    Serial.print(now.second(), DEC);
+    Serial.println(now.second(), DEC);
     
     delay(100);
   }
@@ -248,7 +248,7 @@ else if (*pin_l & 0x02){
     Serial.print(':');
     Serial.print(now.minute(), DEC);
     Serial.print(':');
-    Serial.print(now.second(), DEC);
+    Serial.println(now.second(), DEC);
     
     delay(100);
   }
