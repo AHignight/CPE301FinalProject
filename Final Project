@@ -1,6 +1,46 @@
 // Name: Andrew Hignight, Mathew Rios, Ean McNeil, Michael Wang
 // Date: 12/1/2022
 
+/*
+PORT ASSIGNMENTS:
+
+ DHT:
+  >PB6 = DHT pin
+
+ RCT:
+  >PD1 = SDA
+  >PD0 = SCL
+  
+ State LED indicators:
+  >PK0 = Red ERROR LED
+  >PK1 = Yellow DISABLED LED
+  >PK2 = Green IDLE LED
+  >PK3 = BLue RUNNING IDLE
+
+ Stepper Motor:
+  >PE4 = 1N4
+  >PE5 = 1N2
+  >PG5 = 1N3
+  >PE3 = 1N1
+  >PL0 = button 1
+  >PL1 = button 2
+
+ Disabled Button:
+  >PA1 = disable
+
+ LCD Display:
+  >PH3 = D7
+  >PH4 = D6
+  >PH5 = D5
+  >PH6 = D4
+  >PB4 = E
+  >PB5 = RS
+
+ DC Fan Motor:
+  >PL6 = Fan motor enable   
+ 
+*/
+
 // Libraries
 #include <dht_nonblocking.h>
 #include <Adafruit_Sensor.h>
