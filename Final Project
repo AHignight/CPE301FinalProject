@@ -40,6 +40,9 @@ DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 char error_flag = 0;
 char disable_flag = 0;
 
+// Water Sensor
+int current_temp = 0;
+
 // Declaring Functions
 void setup_timer_registers();
 void error_state();
