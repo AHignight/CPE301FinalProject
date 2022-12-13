@@ -206,7 +206,7 @@ Serial.println(adc_reading);
     myStepper.step(-stepsPerRev); //negative value sends stepPerRev in reverse direvtion
     
     //Displays the time and angle the vent was changed on the lcd monitor
-    Serial.print("Vent closed ");
+    Serial.print("Vent Open ");
     Serial.print(stepsPerRev / 5.68889);
     Serial.print(" degrees on: ");
     Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
