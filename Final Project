@@ -35,12 +35,14 @@ DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 const int stepsPerRev = 256;
 Stepper myStepper(stepsPerRev, 8, 9, 10, 11); //initializes stepper motor on pins 8-11
 
+/*
 // Declaring variable for temp and humd which are decimal values
 float temp;
 float humd;
 int Waterval = 0;  // holds the value
 int inputW = 7; // sensor pin used
 int outputW = 11; //output to the lcd
+*/
 
 // Define data registers and ports
 #define SET_OUTPUT(ddr, pin) *ddr |= (0x01 << pin);
