@@ -41,10 +41,10 @@ char error_flag = 0;
 
 // Declaring Functions
 void setup_timer_registers();
-//void error_state();
-//void idle_state();
-//void running_state();
-//void disabled_state();
+void error_state();
+void idle_state();
+void running_state();
+void disabled_state();
 
 // Stepper Motor
 const int stepsPerRev = 256;
@@ -265,9 +265,10 @@ else if (*pin_l & 0x02){
   }
 }
 
-/*///////////////////
+/*
+///////////////////
   MACHINE STATES
-///////////////////*/
+///////////////////
 void disabled_state() { // Or off state
   lcd.clear();
   lcd.noDisplay();
@@ -348,6 +349,7 @@ void running_state()
     stat = idle;
   }
 }
+*/
 
 /*///////////////////
  UTILITY FUNCTIONS
