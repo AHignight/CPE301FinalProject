@@ -479,6 +479,14 @@ void idle_state() {
   error_flag = 0;
 }
 
+// When water level is good but temperature is too high
+void running_state() {
+  *port_b |= 0b10000000;    // Turn on the blue LED
+  *port_b &= 0b10001111;    // Turn off the rest
+  *port_f |= 0b00001000;    // Turn on the motor
+  error_flag = 0; 
+}
+
 //comment out
 /*
 //Separate calculation	
