@@ -168,9 +168,16 @@ void setup() {
   lcd.begin(16, 2);  	 //enables 16x2 lcd screen spaces
   // pinMode (inputW, INPUT);
   // pinMode (outputW, OUTPUT);
+  
+  dht.begin();
 }
 
 void loop() {
+
+unsigned int w = adc_read(WATER_LEVEL_PORT);
+float f = temperatureRead(true);
+float h = humidity();
+
 // RTC loop for time and date
  DateTime now = rtc.now();
  Serial.print("Time: ");
