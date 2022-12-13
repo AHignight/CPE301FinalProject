@@ -489,22 +489,3 @@ void running_state() {
   
   error_flag = 0; 
 }
-
-//comment out
-/*
-//Separate calculation	
-static bool measure_environment(float *temp, float *humd)
-{
-	//calculating timestamp per milliseconds
-  static unsigned long measurement_timestamp=millis();
-  if(millis()-measurement_timestamp>3000ul)
-  {
-    if(dht_sensor.measure(temp,humd) == true)
-    {
-      measurement_timestamp = millis();
-      return(true);
-    }
-  }
-  return(false);
-}
-*/
