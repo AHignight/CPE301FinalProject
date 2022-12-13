@@ -220,7 +220,7 @@ Serial.println(adc_reading);
     lcd.print(':');
     lcd.print(now.second(), DEC);
     
-    delay(15000);
+    delay(100);
   }
 
 else if (*pin_l & 0x02){
@@ -247,7 +247,7 @@ else if (*pin_l & 0x02){
     lcd.print(':');
     lcd.print(now.second(), DEC);
     
-    delay(15000);
+    delay(100);
   }
   // Choose State Space
   switch(stat) {
