@@ -395,7 +395,7 @@ void error_state() {
 
 //sets pin to PK0
   *port_k |= 0b00000001;    // Turn on the red LED
-  *port_k &= 0b00001111;    // Turn off the rest
+  *port_k &= 0b00000001;    // Turn off the rest
   *port_k &= 0b11110111;    // Turn off the motor
   
   lcd.clear();
@@ -424,7 +424,7 @@ void disabled_state() {
 
 //sets pin to PK1
   *port_k |= 0b00000010;    // Turn on the yellow LED
-  *port_k &= 0b00001111;    // Turn off the rest
+  *port_k &= 0b00000010;    // Turn off the rest
   *port_k &= 0b11110111;    // Turn off the motor
   
   stat = idle; //press start button and initiate idle state
@@ -438,7 +438,7 @@ void idle_state() {
 
 //sets pin to PK2
   *port_k |= 0b00000100;    // Turn on the green LED
-  *port_k &= 0b00001111;    // Turn off the rest
+  *port_k &= 0b00000100;    // Turn off the rest
   *port_k &= 0b11110111;    // Turn off the motor
   
   //gets measurements
@@ -465,7 +465,7 @@ void running_state() {
 
 //sets pin to PK3
   *port_k |= 0b00001000;    // Turn on the blue LED
-  *port_k &= 0b00001111;    // Turn off the rest
+  *port_k &= 0b00001000;    // Turn off the rest
   *port_k |= 0b00001000;    // Turn on the motor
   
   float f = temperatureRead(true);
