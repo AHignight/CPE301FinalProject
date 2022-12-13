@@ -61,9 +61,9 @@ Stepper myStepper(stepsPerRev, 2, 3, 4, 5); //initializes stepper motor on pins 
 #define SET_LOW(port, pin) *port &= ~(0x01 << pin);
 
 // Port A Register Pointers
-volatile unsigned char* port_A = (unsigned char*) 0x22;
-volatile unsigned char* ddr_A = (unsigned char*) 0x21;
-volatile unsigned char* pin_A = (unsigned char*) 0x20;
+volatile unsigned char* port_a = (unsigned char*) 0x22;
+volatile unsigned char* ddr_a = (unsigned char*) 0x21;
+volatile unsigned char* pin_a = (unsigned char*) 0x20;
 
 // Port B Register Pointers
 volatile unsigned char* port_b = (unsigned char*) 0x25;
@@ -188,7 +188,7 @@ if (*pin_a & 0b00000010){
 int t = dht.readTemperature();
 int h = dht.readHumidity();
 current_temp = t;
-
+}
 unsigned int w = adc_read(WATER_LEVEL_PORT);
 float f = temperatureRead(true);
 float h = humidity();
