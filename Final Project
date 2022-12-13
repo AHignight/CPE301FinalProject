@@ -41,10 +41,10 @@ char error_flag = 0;
 
 // Declaring Functions
 void setup_timer_registers();
-void error_state();
-void idle_state();
-void running_state();
-void disabled_state();
+//void error_state();
+//void idle_state();
+//void running_state();
+//void disabled_state();
 
 // Stepper Motor
 const int stepsPerRev = 256;
