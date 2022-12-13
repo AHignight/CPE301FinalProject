@@ -11,6 +11,11 @@
 #include <RTClib.h>
 #include <Stepper.h>
 
+// DHT
+#define DHTPIN 2
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
 // ADC Register
 volatile unsigned char* my_ADMUX = (unsigned char) 0x7C;
 volatile unsigned char* my_ADCSRB = (unsigned char) 0x7B;
