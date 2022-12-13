@@ -208,22 +208,22 @@ Serial.println(adc_reading);
     myStepper.step(-stepsPerRev); //negative value sends stepPerRev in reverse direvtion
     
     //Displays the time and angle the vent was changed on the lcd monitor
-    lcd.print("Vent closed ");
-    lcd.print(stepsPerRev / 5.68889);
-    lcd.print(" degrees on: ");
-    lcd.print(daysOfTheWeek[now.dayOfTheWeek()]);
-    lcd.print(" ");
-    lcd.print(now.month(), DEC);
-    lcd.print('/');
-    lcd.print(now.day());
-    lcd.print('/');
-    lcd.println(now.year(), DEC);
-    lcd.print(" at ");
-    lcd.print(now.hour(), DEC);
-    lcd.print(':');
-    lcd.print(now.minute(), DEC);
-    lcd.print(':');
-    lcd.print(now.second(), DEC);
+    Serial.print("Vent closed ");
+    Serial.print(stepsPerRev / 5.68889);
+    Serial.print(" degrees on: ");
+    Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+    Serial.print(" ");
+    Serial.print(now.month(), DEC);
+    Serial.print('/');
+    Serial.print(now.day());
+    Serial.print('/');
+    Serial.println(now.year(), DEC);
+    Serial.print(" at ");
+    Serial.print(now.hour(), DEC);
+    Serial.print(':');
+    Serial.print(now.minute(), DEC);
+    Serial.print(':');
+    Serial.print(now.second(), DEC);
     
     delay(100);
   }
@@ -235,22 +235,22 @@ else if (*pin_l & 0x02){
     myStepper.step(stepsPerRev);
     
     //Displays the time and angle the vent was changed on the lcd monitor
-    lcd.print("Vent closed ");
-    lcd.print(stepsPerRev / 5.68889);
-    lcd.print(" degrees on: ");
-    lcd.print(daysOfTheWeek[now.dayOfTheWeek()]);
-    lcd.print(" ");
-    lcd.print(now.month(), DEC);
-    lcd.print('/');
-    lcd.print(now.day());
-    lcd.print('/');
-    lcd.println(now.year(), DEC);
-    lcd.print(" at ");
-    lcd.print(now.hour(), DEC);
-    lcd.print(':');
-    lcd.print(now.minute(), DEC);
-    lcd.print(':');
-    lcd.print(now.second(), DEC);
+    Serial.print("Vent closed ");
+    Serial.print(stepsPerRev / 5.68889);
+    Serial.print(" degrees on: ");
+    Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+    Serial.print(" ");
+    Serial.print(now.month(), DEC);
+    Serial.print('/');
+    Serial.print(now.day());
+    Serial.print('/');
+    Serial.println(now.year(), DEC);
+    Serial.print(" at ");
+    Serial.print(now.hour(), DEC);
+    Serial.print(':');
+    Serial.print(now.minute(), DEC);
+    Serial.print(':');
+    Serial.print(now.second(), DEC);
     
     delay(100);
   }
