@@ -158,9 +158,7 @@ void setup() {
    // January 21, 2014 at 3am you would call:
    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
  }
- 
-
- 
+  
   // Stepper Motor
   myStepper.setSpeed(32); //sets stepper motor speed to 60 rpm
   SET_INPUT((unsigned char*) 0x10A, 0); //PL0 set as input
@@ -276,96 +274,6 @@ else if (*pin_l & 0x02){
       break;
   }
 }
-
-/*
-///////////////////
-  MACHINE STATES
-///////////////////
-void disabled_state() { // Or off state
-  lcd.clear();
-  lcd.noDisplay();
-
-  *port_b &= 0b10000001; // Turn off all LEDs
-  *port_b |= 0b00001000; // Turn on Yellow LED
-  
-  // Listen to PB7 and await low signal
-  while ( (*pin_b & (1 << 7)) == 0) { }
-
-  // Start button pressed and initialize idle state.
-  stat = idle;
-  lcd.display();
-}
-
-void idle_state() {
-  *port_b |= 0b01000000; // Turn on green LED
-  *port_b &= 0b01000000; // Turn off other LEDs & fan
-  
-  // Get water level, temperature, and humidity
-  unsigned int w = water_level();
-  float t = temperatureRead(true);
-  float h = humidity();
-
-  // Display temperature and humidity to screen
-  lcd_th(t, h);
-
-  // Check water level.
-  if (w < WATER_LEVEL_THRESHOLD) stat = water;
-  
-  // Check temperature.
-  else if (t > TEMPERATURE_THRESHOLD_F) stat = temp;
-}
-
-void error_state() {
-  *port_b |= 0b00100000; // Turn on red LED
-  *port_b &= 0b00100000; // Turn off other LEDs
-  
-  lcd.clear();
-  lcd.print("Low Water");
-
-  unsigned int w = water_level();
-
-  // Wait for water level to increase
-  while (w < WATER_LEVEL_THRESHOLD) {
-    delay(1000);
-    w = water_level();
-    lcd.setCursor(0, 1);
-    lcd.print("Level:");
-    lcd.setCursor(7, 1);
-    lcd.print(w);
-}
-  
-  // Water level is now okay
-  stat = idle;
-  lcd.clear();
-}
-
-void running_state()
-{
-  *port_b |= 0b00010000; // Enable fan and running LED
-  *port_b &= 0b00010000; // Disable other LEDs
-  float f = temperatureRead(true);
-  float h = humidity();
-
-  // Check water level and temperature
-  if (water_level() < WATER_LEVEL_THRESHOLD) stat = water;
-  else if ( f > TEMPERATURE_THRESHOLD_F ) {
-    delay(1000);
-    Serial.print("Temp: ");
-    Serial.print(f);
-    Serial.print('\n');
-    lcd_th(f, h);
-    return running_state();
-  }
-  else {
-    lcd.clear();
-    stat = idle;
-  }
-}
-*/
-
-/*///////////////////
- UTILITY FUNCTIONS
-///////////////////*/
 
 // GET WATER LEVEL FROM ANALOG PORT 0
 unsigned int water_level() {
