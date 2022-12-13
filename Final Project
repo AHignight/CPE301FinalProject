@@ -57,9 +57,9 @@ volatile unsigned char* ddr_b = (unsigned char*) 0x24;
 volatile unsigned char* pin_b = (unsigned char*) 0x23;
 
 // Define Port F Register Pointers
-volatile unsigned char* port_f = (unsigned char*) 0x11; 
-volatile unsigned char* ddr_f  = (unsigned char*) 0x10; 
-volatile unsigned char* pin_f  = (unsigned char*) 0x0F; 
+volatile unsigned char* port_f = (unsigned char*) 0x31; 
+volatile unsigned char* ddr_f  = (unsigned char*) 0x30; 
+volatile unsigned char* pin_f  = (unsigned char*) 0x2F; 
 
 // Port L Registers Pointers
 volatile unsigned char* port_l = (unsigned char*) 0x10B;
