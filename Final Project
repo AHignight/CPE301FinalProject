@@ -186,7 +186,7 @@ void loop() {
  Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
  Serial.print(") ");
  Serial.println();
- delay(100);
+ delay(1000);
  
  // get the reading from the ADC
 unsigned int adc_reading = adc_read(0); // number used is Analog pin Number
