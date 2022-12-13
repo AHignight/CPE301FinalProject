@@ -36,6 +36,9 @@ LiquidCrystal lcd(11,10,9,8,7,6);
 int DHT_SENSOR_PIN = 12;
 DHT_nonblocking dht_sensor(DHT_SENSOR_PIN,DHT_SENSOR_TYPE);
 
+// Global Variables
+char error_flag = 0;
+
 // Stepper Motor
 const int stepsPerRev = 256;
 Stepper myStepper(stepsPerRev, 2, 3, 4, 5); //initializes stepper motor on pins 8-11
